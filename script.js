@@ -81,43 +81,59 @@ function initializeColorPickers(numColors) {
   }
 }
 
+let originalImageCanvas = document.createElement("canvas");
+
 function displayOriginalImage(image) {
   let container = document.getElementById("resultImages");
   container.innerHTML = ""; // Clear previous images
   let imgDiv = document.createElement("div");
+  imgDiv.style.position = "relative";
+  imgDiv.style.width = image.width + "px";
+  imgDiv.style.height = image.height + "px";
 
-  let canvas = document.createElement("canvas");
-  let ctx = canvas.getContext("2d");
-  canvas.width = image.width;
-  canvas.height = image.height;
-  ctx.drawImage(image, 0, 0);
-  imgDiv.appendChild(canvas);
+  // make image non-draggable
+  image.ondragstart = function () {
+    return false;
+  };
+
+  image.style.position = "absolute";
+  image.style.top = "0";
+  image.style.left = "0";
+  image.style.zIndex = "-1";
+
+  imgDiv.appendChild(image);
+
+  let ctx = originalImageCanvas.getContext("2d");
+  originalImageCanvas.width = image.width;
+  originalImageCanvas.height = image.height;
+  //   ctx.drawImage(image, 0, 0);
+  imgDiv.appendChild(originalImageCanvas);
 
   let isDrawing = false; // Variable to track whether the mouse is down or not
 
   // Event listener for mouse down
-  canvas.addEventListener("mousedown", (e) => {
+  originalImageCanvas.addEventListener("mousedown", (e) => {
     isDrawing = true;
     draw(e);
   });
 
   // Event listener for mouse move
-  canvas.addEventListener("mousemove", (e) => {
+  originalImageCanvas.addEventListener("mousemove", (e) => {
     if (isDrawing) {
       draw(e);
     }
   });
 
   // Event listener for mouse up
-  canvas.addEventListener("mouseup", () => {
+  originalImageCanvas.addEventListener("mouseup", () => {
     isDrawing = false;
     ctx.pathStarted = false; // Reset the flag
   });
 
   function draw(e) {
     // Get the mouse coordinates relative to the canvas
-    const x = e.clientX - canvas.getBoundingClientRect().left;
-    const y = e.clientY - canvas.getBoundingClientRect().top;
+    const x = e.clientX - originalImageCanvas.getBoundingClientRect().left;
+    const y = e.clientY - originalImageCanvas.getBoundingClientRect().top;
 
     // Set the drawing style (e.g., line color, thickness)
     ctx.strokeStyle = "black";
@@ -137,7 +153,7 @@ function displayOriginalImage(image) {
 
   // Clear the drawing when needed
   function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, originalImageCanvas.width, originalImageCanvas.height);
   }
 
   let label = document.createElement("p");
@@ -261,45 +277,45 @@ function createSuperimposedImage() {
 }
 
 function getThresholdedImage(hexColor, threshold) {
-    let tempCanvas = document.createElement("canvas");
-    let tempCtx = tempCanvas.getContext("2d");
-    tempCanvas.width = window.uploadedImage.width;
-    tempCanvas.height = window.uploadedImage.height;
-    tempCtx.drawImage(window.uploadedImage, 0, 0);
+  let tempCanvas = document.createElement("canvas");
+  let tempCtx = tempCanvas.getContext("2d");
+  tempCanvas.width = window.uploadedImage.width;
+  tempCanvas.height = window.uploadedImage.height;
+  tempCtx.drawImage(window.uploadedImage, 0, 0);
 
-    let imageData = tempCtx.getImageData(
-      0,
-      0,
-      tempCanvas.width,
-      tempCanvas.height
-    );
-    let thresholdColor = hexToRgb(hexColor);
+  let imageData = tempCtx.getImageData(
+    0,
+    0,
+    tempCanvas.width,
+    tempCanvas.height
+  );
+  let thresholdColor = hexToRgb(hexColor);
 
-    // Apply the threshold and set the color
-    for (let i = 0; i < imageData.data.length; i += 4) {
-      let r = imageData.data[i];
-      let g = imageData.data[i + 1];
-      let b = imageData.data[i + 2];
-      if (
-        colorDistance(
-          r,
-          g,
-          b,
-          thresholdColor.r,
-          thresholdColor.g,
-          thresholdColor.b
-        ) <= threshold
-      ) {
-        // Set the pixel to the chosen color
-        imageData.data[i] = thresholdColor.r;
-        imageData.data[i + 1] = thresholdColor.g;
-        imageData.data[i + 2] = thresholdColor.b;
-        imageData.data[i + 3] = 255; // fully opaque
-      } else {
-        imageData.data[i + 3] = 0; // fully transparent
-      }
+  // Apply the threshold and set the color
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    let r = imageData.data[i];
+    let g = imageData.data[i + 1];
+    let b = imageData.data[i + 2];
+    if (
+      colorDistance(
+        r,
+        g,
+        b,
+        thresholdColor.r,
+        thresholdColor.g,
+        thresholdColor.b
+      ) <= threshold
+    ) {
+      // Set the pixel to the chosen color
+      imageData.data[i] = thresholdColor.r;
+      imageData.data[i + 1] = thresholdColor.g;
+      imageData.data[i + 2] = thresholdColor.b;
+      imageData.data[i + 3] = 255; // fully opaque
+    } else {
+      imageData.data[i + 3] = 0; // fully transparent
     }
+  }
 
-    tempCtx.putImageData(imageData, 0, 0);
-    return tempCanvas;
+  tempCtx.putImageData(imageData, 0, 0);
+  return tempCanvas;
 }
