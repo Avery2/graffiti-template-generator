@@ -5,7 +5,7 @@ document
     reader.onload = function () {
       let img = new Image();
       img.onload = function () {
-        initializeColorPickers(3); // default to 3 colors
+        initializeColorPickers(4); // default to 4 colors
         displayOriginalImage(img);
       };
       img.src = reader.result;
