@@ -63,7 +63,7 @@ function initializeColorPickers(numColors) {
     let thresholdSlider = document.createElement("input");
     thresholdSlider.type = "range";
     thresholdSlider.min = "0";
-    thresholdSlider.max = "150";
+    thresholdSlider.max = "250";
     thresholdSlider.value = "10";
     thresholdSlider.id = "threshold" + i;
     thresholdSlider.oninput = updateImages;
