@@ -117,6 +117,7 @@ function updateImages() {
     let threshold = document.getElementById("threshold" + i).value;
     createThresholdImage(color, i, threshold);
   }
+  createSuperimposedImage();
   // Do not save state here to avoid saving incomplete state
 }
 
@@ -169,4 +170,77 @@ function hexToRgb(hex) {
 
 function colorDistance(r1, g1, b1, r2, g2, b2) {
   return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+}
+
+function createSuperimposedImage() {
+  if (!window.uploadedImage) return;
+
+  let canvas = document.createElement("canvas");
+  let ctx = canvas.getContext("2d");
+  canvas.width = window.uploadedImage.width;
+  canvas.height = window.uploadedImage.height;
+
+  let numColors =
+    document.getElementById("colorSelectors").childElementCount / 3;
+
+  for (let i = 0; i < numColors; i++) {
+    let color = document.getElementById("color" + i).value;
+    let threshold = document.getElementById("threshold" + i).value;
+
+    // Create thresholded image for each color
+    let colorLayer = getThresholdedImage(color, threshold);
+
+    // Draw color layer onto the main canvas
+    ctx.globalCompositeOperation = "source-over";
+    ctx.drawImage(colorLayer, 0, 0);
+  }
+
+  // Reset composite operation
+  ctx.globalCompositeOperation = "source-over";
+
+  let imgDiv = document.createElement("div");
+  imgDiv.appendChild(canvas);
+  let label = document.createElement("p");
+  label.textContent = "Superimposed Image";
+  imgDiv.appendChild(label);
+  document.getElementById("resultImages").appendChild(imgDiv);
+}
+
+function getThresholdedImage(hexColor, threshold) {
+  let tempCanvas = document.createElement("canvas");
+  let tempCtx = tempCanvas.getContext("2d");
+  tempCanvas.width = window.uploadedImage.width;
+  tempCanvas.height = window.uploadedImage.height;
+  tempCtx.drawImage(window.uploadedImage, 0, 0);
+
+  let imageData = tempCtx.getImageData(
+    0,
+    0,
+    tempCanvas.width,
+    tempCanvas.height
+  );
+  let thresholdColor = hexToRgb(hexColor);
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    let r = imageData.data[i];
+    let g = imageData.data[i + 1];
+    let b = imageData.data[i + 2];
+    if (
+      colorDistance(
+        r,
+        g,
+        b,
+        thresholdColor.r,
+        thresholdColor.g,
+        thresholdColor.b
+      ) <= threshold
+    ) {
+      imageData.data[i + 3] = 255; // fully opaque
+    } else {
+      imageData.data[i + 3] = 0; // fully transparent
+    }
+  }
+
+  tempCtx.putImageData(imageData, 0, 0);
+  return tempCanvas;
 }
