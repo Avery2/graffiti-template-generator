@@ -14,6 +14,36 @@ document
     reader.readAsDataURL(event.target.files[0]);
   });
 
+function loadSavedState() {
+  let savedImage = localStorage.getItem("uploadedImage");
+  if (savedImage) {
+    let img = new Image();
+    img.onload = function () {
+      window.uploadedImage = img;
+      displayOriginalImage(img);
+      loadColorsAndThresholds();
+    };
+    img.src = savedImage;
+  }
+}
+
+function loadColorsAndThresholds() {
+  let savedColors = JSON.parse(localStorage.getItem("colors"));
+  let savedThresholds = JSON.parse(localStorage.getItem("thresholds"));
+  if (savedColors && savedThresholds) {
+    initializeColorPickers(savedColors.length);
+    for (let i = 0; i < savedColors.length; i++) {
+      document.getElementById("color" + i).value = savedColors[i];
+      document.getElementById("threshold" + i).value = savedThresholds[i];
+    }
+    updateImages(); // Regenerate the images
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  loadSavedState();
+});
+
 function initializeColorPickers(numColors) {
   let container = document.getElementById("colorSelectors");
   container.innerHTML = "";
@@ -48,6 +78,21 @@ function displayOriginalImage(image) {
   container.appendChild(imgDiv);
 }
 
+function saveCurrentState() {
+  if (!window.uploadedImage) return;
+  let colors = [];
+  let thresholds = [];
+  let numColors =
+    document.getElementById("colorSelectors").childElementCount / 2;
+  for (let i = 0; i < numColors; i++) {
+    colors.push(document.getElementById("color" + i).value);
+    thresholds.push(document.getElementById("threshold" + i).value);
+  }
+  localStorage.setItem("uploadedImage", window.uploadedImage.src);
+  localStorage.setItem("colors", JSON.stringify(colors));
+  localStorage.setItem("thresholds", JSON.stringify(thresholds));
+}
+
 function updateImages() {
   document.getElementById("resultImages").innerHTML = ""; // Clear previous results
   displayOriginalImage(window.uploadedImage); // Display original image again
@@ -58,6 +103,7 @@ function updateImages() {
     let threshold = document.getElementById("threshold" + i).value;
     createThresholdImage(color, i, threshold);
   }
+  saveCurrentState();
 }
 
 function createThresholdImage(hexColor, index, threshold) {
