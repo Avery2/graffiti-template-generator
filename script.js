@@ -1,3 +1,5 @@
+const numColors = 4;
+
 document
   .getElementById("imageUpload")
   .addEventListener("change", function (event) {
@@ -5,7 +7,7 @@ document
     reader.onload = function () {
       let img = new Image();
       img.onload = function () {
-        initializeColorPickers(4); // default to 4 colors
+        initializeColorPickers(numColors);
         displayOriginalImage(img);
       };
       img.src = reader.result;
@@ -79,6 +81,18 @@ function initializeColorPickers(numColors) {
     };
     container.appendChild(thresholdValue);
   }
+
+  // add a checkbox to toggle the masking on and off
+  let maskCheckbox = document.createElement("input");
+  maskCheckbox.type = "checkbox";
+  maskCheckbox.id = "maskCheckbox";
+  container.appendChild(maskCheckbox);
+  let maskCheckboxLabel = document.createElement("label");
+  maskCheckboxLabel.htmlFor = "maskCheckbox";
+  maskCheckboxLabel.textContent =
+    "Masking Enabled on Superimposed Image (draw on Original to mask)";
+  container.appendChild(maskCheckboxLabel);
+  maskCheckbox.addEventListener("change", createSuperimposedImage);
 }
 
 let originalImageCanvas = document.createElement("canvas");
@@ -183,14 +197,12 @@ function saveCurrentState() {
 function updateImages() {
   document.getElementById("resultImages").innerHTML = ""; // Clear previous results
   displayOriginalImage(window.uploadedImage); // Display original image again
-  let numColors =
-    document.getElementById("colorSelectors").childElementCount / 3; // Adjusted for color picker, slider, and label
+  createSuperimposedImage();
   for (let i = 0; i < numColors; i++) {
     let color = document.getElementById("color" + i).value;
     let threshold = document.getElementById("threshold" + i).value;
     createThresholdImage(color, i, threshold);
   }
-  createSuperimposedImage();
   // Do not save state here to avoid saving incomplete state
 }
 
@@ -259,9 +271,6 @@ function createSuperimposedImage() {
   canvas.width = window.uploadedImage.width;
   canvas.height = window.uploadedImage.height;
 
-  let numColors =
-    document.getElementById("colorSelectors").childElementCount / 3;
-
   for (let i = 0; i < numColors; i++) {
     let color = document.getElementById("color" + i).value;
     let threshold = document.getElementById("threshold" + i).value;
@@ -286,7 +295,13 @@ function createSuperimposedImage() {
   label.textContent = "Superimposed Image";
   imgDiv.appendChild(label);
   imgDiv.id = "superimposedImage";
-  document.getElementById("resultImages").appendChild(imgDiv);
+  // append as second child to make it appear below the original image
+  document
+    .getElementById("resultImages")
+    .insertBefore(
+      imgDiv,
+      document.getElementById("resultImages").childNodes[1]
+    );
 }
 
 function getThresholdedImage(hexColor, threshold) {
@@ -309,6 +324,8 @@ function getThresholdedImage(hexColor, threshold) {
 
   let thresholdColor = hexToRgb(hexColor);
 
+  const isMaskingEnabled = document.getElementById("maskCheckbox").checked;
+
   // Apply the threshold and set the color
   for (let i = 0; i < imageData.data.length; i += 4) {
     let r = imageData.data[i];
@@ -323,7 +340,7 @@ function getThresholdedImage(hexColor, threshold) {
         thresholdColor.g,
         thresholdColor.b
       ) <= threshold &&
-      originalImageData.data[i + 3] > 0
+      (!isMaskingEnabled || originalImageData.data[i + 3] > 0)
     ) {
       // Set the pixel to the chosen color
       imageData.data[i] = thresholdColor.r;
