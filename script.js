@@ -21,7 +21,17 @@ function initializeColorPickers(numColors) {
     let colorPicker = document.createElement("input");
     colorPicker.type = "color";
     colorPicker.id = "color" + i;
+    colorPicker.oninput = updateImages;
     container.appendChild(colorPicker);
+
+    let thresholdSlider = document.createElement("input");
+    thresholdSlider.type = "range";
+    thresholdSlider.min = "0";
+    thresholdSlider.max = "50";
+    thresholdSlider.value = "10";
+    thresholdSlider.id = "threshold" + i;
+    thresholdSlider.oninput = updateImages;
+    container.appendChild(thresholdSlider);
   }
 }
 
@@ -36,17 +46,19 @@ function displayOriginalImage(image) {
   container.appendChild(imgDiv);
 }
 
-function processImage() {
+function updateImages() {
   document.getElementById("resultImages").innerHTML = ""; // Clear previous results
   displayOriginalImage(window.uploadedImage); // Display original image again
-  let numColors = document.getElementById("colorSelectors").childElementCount;
+  let numColors =
+    document.getElementById("colorSelectors").childElementCount / 2; // Dividing by 2 as we now have two inputs per color
   for (let i = 0; i < numColors; i++) {
     let color = document.getElementById("color" + i).value;
-    createThresholdImage(color, i);
+    let threshold = document.getElementById("threshold" + i).value;
+    createThresholdImage(color, i, threshold);
   }
 }
 
-function createThresholdImage(hexColor, index) {
+function createThresholdImage(hexColor, index, threshold) {
   let canvas = document.createElement("canvas");
   let ctx = canvas.getContext("2d");
   canvas.width = window.uploadedImage.width;
@@ -55,8 +67,6 @@ function createThresholdImage(hexColor, index) {
 
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   let thresholdColor = hexToRgb(hexColor);
-
-  const THRESHOLD = 200;
 
   for (let i = 0; i < imageData.data.length; i += 4) {
     let r = imageData.data[i];
@@ -70,7 +80,7 @@ function createThresholdImage(hexColor, index) {
         thresholdColor.r,
         thresholdColor.g,
         thresholdColor.b
-      ) <= THRESHOLD
+      ) <= threshold
     ) {
       imageData.data[i + 3] = 255; // fully opaque
     } else {
@@ -83,7 +93,7 @@ function createThresholdImage(hexColor, index) {
   let imgDiv = document.createElement("div");
   imgDiv.appendChild(canvas);
   let label = document.createElement("p");
-  label.textContent = `Processed Image - Color: ${hexColor.toUpperCase()}`;
+  label.textContent = `Processed Image - Color: ${hexColor.toUpperCase()}, Threshold: ${threshold}`;
   imgDiv.appendChild(label);
   document.getElementById("resultImages").appendChild(imgDiv);
 }
