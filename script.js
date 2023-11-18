@@ -160,7 +160,7 @@ function displayOriginalImage(image) {
   }
 
   let label = document.createElement("p");
-  label.textContent = "Original Image";
+  label.textContent = "Original Image -- draw to mask";
   imgDiv.appendChild(label);
   container.appendChild(imgDiv);
 }
