@@ -139,7 +139,8 @@ function displayOriginalImage(image) {
 
     // Set the drawing style (e.g., line color, thickness)
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 50;
+    const brushSize = 50;
+    ctx.lineWidth = brushSize;
     ctx.lineCap = "round";
 
     // Start or continue the drawing path
