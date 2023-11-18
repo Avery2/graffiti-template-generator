@@ -34,7 +34,9 @@ function loadColorsAndThresholds() {
     initializeColorPickers(savedColors.length);
     for (let i = 0; i < savedColors.length; i++) {
       document.getElementById("color" + i).value = savedColors[i];
-      document.getElementById("threshold" + i).value = savedThresholds[i];
+      document.getElementById("threshold" + i).value = Number(
+        savedThresholds[i]
+      );
     }
     updateImages(); // Regenerate the images
   }
@@ -63,6 +65,7 @@ function initializeColorPickers(numColors) {
     thresholdSlider.id = "threshold" + i;
     thresholdSlider.oninput = updateImages;
     thresholdSlider.className = "thresholdSlider";
+    thresholdSlider.addEventListener("change", saveCurrentState);
     container.appendChild(thresholdSlider);
 
     let thresholdValue = document.createElement("span");
@@ -91,7 +94,7 @@ function saveCurrentState() {
   let colors = [];
   let thresholds = [];
   let numColors =
-    document.getElementById("colorSelectors").childElementCount / 2;
+    document.getElementById("colorSelectors").childElementCount / 3;
   for (let i = 0; i < numColors; i++) {
     colors.push(document.getElementById("color" + i).value);
     thresholds.push(document.getElementById("threshold" + i).value);
