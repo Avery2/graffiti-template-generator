@@ -12,3 +12,10 @@ Before + After (combined)
 Example Video
 
 https://github.com/Avery2/graffiti-template-generator/assets/53503018/4527e431-3142-4e32-8e4b-68bc917c815a
+
+Then
+- Trace template on screen
+- Cut out
+- Use as graffiti template
+
+<img width="49%" src="https://github.com/Avery2/graffiti-template-generator/assets/53503018/82515c40-14d6-4cfe-8d8e-9d11d0c98b64"/>
