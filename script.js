@@ -115,6 +115,7 @@ function displayOriginalImage(image) {
   originalImageCanvas.addEventListener("mousedown", (e) => {
     isDrawing = true;
     draw(e);
+    createSuperimposedImage();
   });
 
   // Event listener for mouse move
@@ -128,6 +129,7 @@ function displayOriginalImage(image) {
   originalImageCanvas.addEventListener("mouseup", () => {
     isDrawing = false;
     ctx.pathStarted = false; // Reset the flag
+    createSuperimposedImage();
   });
 
   function draw(e) {
@@ -245,6 +247,12 @@ function colorDistance(r1, g1, b1, r2, g2, b2) {
 function createSuperimposedImage() {
   if (!window.uploadedImage) return;
 
+  // clear previous superimposed image
+  let superimposedImage = document.getElementById("superimposedImage");
+  if (superimposedImage) {
+    superimposedImage.remove();
+  }
+
   let canvas = document.createElement("canvas");
   let ctx = canvas.getContext("2d");
   canvas.width = window.uploadedImage.width;
@@ -265,6 +273,9 @@ function createSuperimposedImage() {
     ctx.drawImage(colorLayer, 0, 0);
   }
 
+  ctx.globalCompositeOperation = "source-in";
+  //   ctx.drawImage(originalImageCanvas, 0, 0);
+
   // Reset composite operation
   ctx.globalCompositeOperation = "source-over";
 
@@ -273,6 +284,7 @@ function createSuperimposedImage() {
   let label = document.createElement("p");
   label.textContent = "Superimposed Image";
   imgDiv.appendChild(label);
+  imgDiv.id = "superimposedImage";
   document.getElementById("resultImages").appendChild(imgDiv);
 }
 
@@ -289,6 +301,11 @@ function getThresholdedImage(hexColor, threshold) {
     tempCanvas.width,
     tempCanvas.height
   );
+
+  let originalImageData = originalImageCanvas
+    .getContext("2d")
+    .getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+
   let thresholdColor = hexToRgb(hexColor);
 
   // Apply the threshold and set the color
@@ -304,7 +321,8 @@ function getThresholdedImage(hexColor, threshold) {
         thresholdColor.r,
         thresholdColor.g,
         thresholdColor.b
-      ) <= threshold
+      ) <= threshold &&
+      originalImageData.data[i + 3] > 0
     ) {
       // Set the pixel to the chosen color
       imageData.data[i] = thresholdColor.r;
