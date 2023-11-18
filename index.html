@@ -1,26 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graffiti Template Generator</title>
-    <style>
-        /* Add your CSS styling here */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        .container {
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <input type="file" id="imageInput" accept="image/*">
-    </div>
-    <div class="container">
-        <canvas id="canvas"></canvas>
-    </div>
+    <h1>Graffiti Template Generator</h1>
+    <input type="file" id="imageUpload" accept="image/*">
+
+    <div id="colorSelectors"></div>
+
+    <button onclick="processImage()">Generate Template</button>
+    <div id="resultImages"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
