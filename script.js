@@ -56,6 +56,8 @@ function createThresholdImage(hexColor, index) {
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   let thresholdColor = hexToRgb(hexColor);
 
+  const THRESHOLD = 200;
+
   for (let i = 0; i < imageData.data.length; i += 4) {
     let r = imageData.data[i];
     let g = imageData.data[i + 1];
@@ -68,7 +70,7 @@ function createThresholdImage(hexColor, index) {
         thresholdColor.r,
         thresholdColor.g,
         thresholdColor.b
-      ) <= 10
+      ) <= THRESHOLD
     ) {
       imageData.data[i + 3] = 255; // fully opaque
     } else {
