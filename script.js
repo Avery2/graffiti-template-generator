@@ -85,7 +85,14 @@ function displayOriginalImage(image) {
   let container = document.getElementById("resultImages");
   container.innerHTML = ""; // Clear previous images
   let imgDiv = document.createElement("div");
-  imgDiv.appendChild(image);
+
+  let canvas = document.createElement("canvas");
+  let ctx = canvas.getContext("2d");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  ctx.drawImage(image, 0, 0);
+  imgDiv.appendChild(canvas);
+
   let label = document.createElement("p");
   label.textContent = "Original Image";
   imgDiv.appendChild(label);
