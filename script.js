@@ -125,6 +125,11 @@ function displayOriginalImage(image) {
 
   let isDrawing = false; // Variable to track whether the mouse is down or not
 
+  // remove all existing event listeners from originalImageCanvas
+  originalImageCanvas.removeEventListener("mousedown", () => {});
+  originalImageCanvas.removeEventListener("mousemove", () => {});
+  originalImageCanvas.removeEventListener("mouseup", () => {});
+
   // Event listener for mouse down
   originalImageCanvas.addEventListener("mousedown", (e) => {
     isDrawing = true;
@@ -152,7 +157,7 @@ function displayOriginalImage(image) {
     const y = e.clientY - originalImageCanvas.getBoundingClientRect().top;
 
     // Set the drawing style (e.g., line color, thickness)
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = "rgba(10, 10, 10, 0.1)";
     const brushSize = 50;
     ctx.lineWidth = brushSize;
     ctx.lineCap = "round";
