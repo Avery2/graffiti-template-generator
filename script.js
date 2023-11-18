@@ -93,6 +93,53 @@ function displayOriginalImage(image) {
   ctx.drawImage(image, 0, 0);
   imgDiv.appendChild(canvas);
 
+  let isDrawing = false; // Variable to track whether the mouse is down or not
+
+  // Event listener for mouse down
+  canvas.addEventListener("mousedown", (e) => {
+    isDrawing = true;
+    draw(e);
+  });
+
+  // Event listener for mouse move
+  canvas.addEventListener("mousemove", (e) => {
+    if (isDrawing) {
+      draw(e);
+    }
+  });
+
+  // Event listener for mouse up
+  canvas.addEventListener("mouseup", () => {
+    isDrawing = false;
+    ctx.pathStarted = false; // Reset the flag
+  });
+
+  function draw(e) {
+    // Get the mouse coordinates relative to the canvas
+    const x = e.clientX - canvas.getBoundingClientRect().left;
+    const y = e.clientY - canvas.getBoundingClientRect().top;
+
+    // Set the drawing style (e.g., line color, thickness)
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 15;
+    ctx.lineCap = "round";
+
+    // Start or continue the drawing path
+    if (!ctx.pathStarted) {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.pathStarted = true;
+    } else {
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+  }
+
+  // Clear the drawing when needed
+  function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
   let label = document.createElement("p");
   label.textContent = "Original Image";
   imgDiv.appendChild(label);
