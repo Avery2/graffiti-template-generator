@@ -111,13 +111,13 @@ function updateImages() {
   document.getElementById("resultImages").innerHTML = ""; // Clear previous results
   displayOriginalImage(window.uploadedImage); // Display original image again
   let numColors =
-    document.getElementById("colorSelectors").childElementCount / 2; // Dividing by 2 as we now have two inputs per color
+    document.getElementById("colorSelectors").childElementCount / 3; // Adjusted for color picker, slider, and label
   for (let i = 0; i < numColors; i++) {
     let color = document.getElementById("color" + i).value;
     let threshold = document.getElementById("threshold" + i).value;
     createThresholdImage(color, i, threshold);
   }
-  saveCurrentState();
+  // Do not save state here to avoid saving incomplete state
 }
 
 function createThresholdImage(hexColor, index, threshold) {
