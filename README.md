@@ -11,7 +11,7 @@ Before + After (combined)
 
 Example Video
 
-https://github.com/Avery2/graffiti-template-generator/assets/53503018/4527e431-3142-4e32-8e4b-68bc917c815a
+https://github.com/Avery2/graffiti-template-generator/assets/53503018/2b87a7dc-be14-417f-a81b-e3d41f5ad63f
 
 Then
 - Trace template on screen
