@@ -37,6 +37,9 @@ function loadColorsAndThresholds() {
       document.getElementById("threshold" + i).value = Number(
         savedThresholds[i]
       );
+      document.getElementById("thresholdValue" + i).textContent = Number(
+        savedThresholds[i]
+      );
     }
     updateImages(); // Regenerate the images
   }
