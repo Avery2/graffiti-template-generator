@@ -56,7 +56,7 @@ function initializeColorPickers(numColors) {
     let colorPicker = document.createElement("input");
     colorPicker.type = "color";
     colorPicker.id = "color" + i;
-    colorPicker.oninput = updateImages;
+    colorPicker.addEventListener("input", updateImages);
     colorPicker.className = "colorPicker";
     container.appendChild(colorPicker);
 
@@ -66,7 +66,7 @@ function initializeColorPickers(numColors) {
     thresholdSlider.max = "250";
     thresholdSlider.value = "10";
     thresholdSlider.id = "threshold" + i;
-    thresholdSlider.oninput = updateImages;
+    thresholdSlider.addEventListener("input", updateImages);
     thresholdSlider.className = "thresholdSlider";
     thresholdSlider.addEventListener("change", saveCurrentState);
     container.appendChild(thresholdSlider);
