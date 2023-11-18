@@ -7,3 +7,18 @@ body {
 #colorSelectors, #resultImages {
     margin-top: 20px;
 }
+
+.colorPicker {
+    margin: 10px;
+}
+
+.thresholdSlider {
+    margin: 10px;
+}
+
+#resultImages {
+    /* images should wrap, but also have margin. */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}

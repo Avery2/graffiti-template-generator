@@ -22,6 +22,7 @@ function initializeColorPickers(numColors) {
     colorPicker.type = "color";
     colorPicker.id = "color" + i;
     colorPicker.oninput = updateImages;
+    colorPicker.className = "colorPicker";
     container.appendChild(colorPicker);
 
     let thresholdSlider = document.createElement("input");
@@ -31,6 +32,7 @@ function initializeColorPickers(numColors) {
     thresholdSlider.value = "10";
     thresholdSlider.id = "threshold" + i;
     thresholdSlider.oninput = updateImages;
+    thresholdSlider.className = "thresholdSlider";
     container.appendChild(thresholdSlider);
   }
 }
