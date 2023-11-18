@@ -6,7 +6,7 @@ document
       let img = new Image();
       img.onload = function () {
         initializeColorPickers(3); // default to 3 colors
-        document.getElementById("resultImages").innerHTML = "";
+        displayOriginalImage(img);
       };
       img.src = reader.result;
       window.uploadedImage = img;
@@ -25,7 +25,20 @@ function initializeColorPickers(numColors) {
   }
 }
 
+function displayOriginalImage(image) {
+  let container = document.getElementById("resultImages");
+  container.innerHTML = ""; // Clear previous images
+  let imgDiv = document.createElement("div");
+  imgDiv.appendChild(image);
+  let label = document.createElement("p");
+  label.textContent = "Original Image";
+  imgDiv.appendChild(label);
+  container.appendChild(imgDiv);
+}
+
 function processImage() {
+  document.getElementById("resultImages").innerHTML = ""; // Clear previous results
+  displayOriginalImage(window.uploadedImage); // Display original image again
   let numColors = document.getElementById("colorSelectors").childElementCount;
   for (let i = 0; i < numColors; i++) {
     let color = document.getElementById("color" + i).value;
@@ -65,7 +78,12 @@ function createThresholdImage(hexColor, index) {
 
   ctx.putImageData(imageData, 0, 0);
 
-  document.getElementById("resultImages").appendChild(canvas);
+  let imgDiv = document.createElement("div");
+  imgDiv.appendChild(canvas);
+  let label = document.createElement("p");
+  label.textContent = `Processed Image - Color: ${hexColor.toUpperCase()}`;
+  imgDiv.appendChild(label);
+  document.getElementById("resultImages").appendChild(imgDiv);
 }
 
 function hexToRgb(hex) {
