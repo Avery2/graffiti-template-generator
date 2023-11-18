@@ -64,6 +64,14 @@ function initializeColorPickers(numColors) {
     thresholdSlider.oninput = updateImages;
     thresholdSlider.className = "thresholdSlider";
     container.appendChild(thresholdSlider);
+
+    let thresholdValue = document.createElement("span");
+    thresholdValue.id = "thresholdValue" + i;
+    thresholdValue.textContent = thresholdSlider.value;
+    thresholdSlider.oninput = function () {
+      thresholdValue.textContent = this.value;
+    };
+    container.appendChild(thresholdValue);
   }
 }
 
