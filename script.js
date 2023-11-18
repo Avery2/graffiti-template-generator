@@ -207,40 +207,45 @@ function createSuperimposedImage() {
 }
 
 function getThresholdedImage(hexColor, threshold) {
-  let tempCanvas = document.createElement("canvas");
-  let tempCtx = tempCanvas.getContext("2d");
-  tempCanvas.width = window.uploadedImage.width;
-  tempCanvas.height = window.uploadedImage.height;
-  tempCtx.drawImage(window.uploadedImage, 0, 0);
+    let tempCanvas = document.createElement("canvas");
+    let tempCtx = tempCanvas.getContext("2d");
+    tempCanvas.width = window.uploadedImage.width;
+    tempCanvas.height = window.uploadedImage.height;
+    tempCtx.drawImage(window.uploadedImage, 0, 0);
 
-  let imageData = tempCtx.getImageData(
-    0,
-    0,
-    tempCanvas.width,
-    tempCanvas.height
-  );
-  let thresholdColor = hexToRgb(hexColor);
+    let imageData = tempCtx.getImageData(
+      0,
+      0,
+      tempCanvas.width,
+      tempCanvas.height
+    );
+    let thresholdColor = hexToRgb(hexColor);
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    let r = imageData.data[i];
-    let g = imageData.data[i + 1];
-    let b = imageData.data[i + 2];
-    if (
-      colorDistance(
-        r,
-        g,
-        b,
-        thresholdColor.r,
-        thresholdColor.g,
-        thresholdColor.b
-      ) <= threshold
-    ) {
-      imageData.data[i + 3] = 255; // fully opaque
-    } else {
-      imageData.data[i + 3] = 0; // fully transparent
+    // Apply the threshold and set the color
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      let r = imageData.data[i];
+      let g = imageData.data[i + 1];
+      let b = imageData.data[i + 2];
+      if (
+        colorDistance(
+          r,
+          g,
+          b,
+          thresholdColor.r,
+          thresholdColor.g,
+          thresholdColor.b
+        ) <= threshold
+      ) {
+        // Set the pixel to the chosen color
+        imageData.data[i] = thresholdColor.r;
+        imageData.data[i + 1] = thresholdColor.g;
+        imageData.data[i + 2] = thresholdColor.b;
+        imageData.data[i + 3] = 255; // fully opaque
+      } else {
+        imageData.data[i + 3] = 0; // fully transparent
+      }
     }
-  }
 
-  tempCtx.putImageData(imageData, 0, 0);
-  return tempCanvas;
+    tempCtx.putImageData(imageData, 0, 0);
+    return tempCanvas;
 }
