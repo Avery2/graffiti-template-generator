@@ -1,5 +1,7 @@
 # graffiti-template-generator
 
+NOTE: If you like this, this tool is just better: https://www.vectorizer.io/
+
 ## Example
 
 Before + After (combined)
